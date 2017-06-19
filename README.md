@@ -49,7 +49,7 @@ fluent_agent_lite_virtual_memory_usage{id="www2"} 8.3791872e+07
 
 Name     | Description | Default | note
 ---------|-------------|----|----
-web.listen-address | Address on which to expose metrics and web interface | 9270 |
+web.listen-address | Address on which to expose metrics and web interface | 9269 |
 web.telemetry-path | Path under which to expose metrics | /metrics |
 log.level | Log level | info |
 

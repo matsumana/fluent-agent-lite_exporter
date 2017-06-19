@@ -16,7 +16,7 @@ import (
 
 var (
 	// command line parameters
-	listenAddress = flag.String("web.listen-address", "9270", "Address on which to expose metrics and web interface.")
+	listenAddress = flag.String("web.listen-address", "9269", "Address on which to expose metrics and web interface.")
 	metricsPath   = flag.String("web.telemetry-path", "/metrics", "Path under which to expose metrics.")
 )
 

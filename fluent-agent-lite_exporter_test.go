@@ -11,7 +11,7 @@ import (
 
 // e2e test
 func TestE2EPartialFailure(t *testing.T) {
-	metrics, err := get("http://localhost:9270/metrics")
+	metrics, err := get("http://localhost:9269/metrics")
 	if err != nil {
 		t.Error("HttpClient.Get = %v", err)
 	}
