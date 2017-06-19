@@ -37,7 +37,7 @@ e2etest:
 .PHONY : e2etest_setup
 e2etest_setup:
 	# install depend libs
-	yum install -y git gcc perl-devel
+	yum install -y git gcc perl-devel cpan
 	curl -L https://cpanmin.us | perl - App::cpanminus
 
 	# install fluent-agent-lite
