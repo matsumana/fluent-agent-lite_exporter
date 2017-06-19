@@ -41,20 +41,15 @@ e2etest_setup:
 	curl -L https://cpanmin.us | perl - App::cpanminus
 
 	# install fluent-agent-lite
-	cd /tmp
-	git clone https://github.com/tagomoris/fluent-agent-lite.git
-	cd fluent-agent-lite
-	git fetch --prune
-	git checkout -b v1.0 refs/tags/v1.0
-	./bin/install.sh
+	git clone https://github.com/tagomoris/fluent-agent-lite.git /root/fluent-agent-lite
+	git --git-dir=/root/fluent-agent-lite/.git --work-tree=/root/fluent-agent-lite checkout -b v1.0 refs/tags/v1.0
+	/root/fluent-agent-lite/bin/install.sh
 
 	# update config file
-	sed -i -e 's|^# LOGS=$(cat /etc/fluent-agent.logs)|LOGS=$(cat /etc/fluent-agent.logs)|g' /etc/fluent-agent-lite.conf
-	cat << EOS > /etc/fluent-agent.logs
-	www0  /tmp/www0_access.log
-	www1  /tmp/www1_access.log
-	www2  /tmp/www2_access.log
-	EOS
+	perl -pi -e 's/^# LOGS=\$$\(cat \/etc\/fluent-agent.logs\)/LOGS=\$$\(cat \/etc\/fluent-agent.logs\)/g' /etc/fluent-agent-lite.conf
+	echo 'www0  /tmp/www0_access.log' >  /etc/fluent-agent.logs
+	echo 'www1  /tmp/www1_access.log' >> /etc/fluent-agent.logs
+	echo 'www2  /tmp/www2_access.log' >> /etc/fluent-agent.logs
 
 	# prepare dummy log
 	touch /tmp/www0_access.log
@@ -64,13 +59,20 @@ e2etest_setup:
 	# start
 	/etc/init.d/fluent-agent-lite start
 
-	# Wait for fluent-agent-lite_exporter to start up
-	sleep 3
-
 	# golang
 	yum install -y git
 	curl -L https://storage.googleapis.com/golang/go${BUILD_GOLANG_VERSION}.linux-amd64.tar.gz > /tmp/go${BUILD_GOLANG_VERSION}.linux-amd64.tar.gz
 	tar xvf /tmp/go${BUILD_GOLANG_VERSION}.linux-amd64.tar.gz -C /usr/local
+
+	# start fluent-agent-lite_exporter
+	/go/src/github.com/matsumana/fluent-agent-lite_exporter/bin/fluent-agent-lite_exporter-*.linux-amd64/fluent-agent-lite_exporter -log.level=debug &
+
+	# kill several process for e2etest
+	kill `ps aux | grep fluent-agent-lite | grep www0 | awk '{print $2;}'`
+	kill `ps aux | grep fluent-agent-lite | grep www1 | awk '{print $2;}'`
+
+	# Wait for fluent-agent-lite_exporter to start up
+	sleep 3
 
 check-github-token:
 	if [ ! -f "./github_token" ]; then echo 'file github_token is required'; exit 1 ; fi
