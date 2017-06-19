@@ -68,8 +68,8 @@ e2etest_setup:
 	/go/src/github.com/matsumana/fluent-agent-lite_exporter/bin/fluent-agent-lite_exporter-*.linux-amd64/fluent-agent-lite_exporter -log.level=debug &
 
 	# kill several process for e2etest
-	kill `ps aux | grep fluent-agent-lite | grep www0 | awk '{print $$2;}'`
-	kill `ps aux | grep fluent-agent-lite | grep www1 | awk '{print $$2;}'`
+	kill -9 `cat /var/run/fluent-agent-lite.pid | head -1`
+	kill -9 `cat /var/run/fluent-agent-lite.pid | tail -1`
 
 	# Wait for fluent-agent-lite_exporter to start up
 	sleep 3
