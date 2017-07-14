@@ -109,11 +109,12 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 }
 
 func (e *Exporter) collect(ch chan<- prometheus.Metric) {
-	e.fluentAgentLiteUp.Set(0)
-	e.fluentAgentLiteDown.Set(0)
-
 	targetLogConfigs, err := e.getTargetLogConfigs()
 	if err != nil {
+		e.fluentAgentLiteUp.Set(0)
+		e.fluentAgentLiteUp.Collect(ch)
+		e.fluentAgentLiteDown.Set(0)
+		e.fluentAgentLiteDown.Collect(ch)
 		e.scrapeFailures.Inc()
 		e.scrapeFailures.Collect(ch)
 		return
